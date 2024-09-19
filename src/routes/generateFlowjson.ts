@@ -120,7 +120,7 @@ const generateFlowJSON = (schema: Schema) => {
   };
 
   const collectPreviousData = (currentIndex: number, forDataField = false): { [key: string]: any } => {
-    return schema.screens.slice(0, currentIndex).flatMap(screen =>
+    const entries = schema.screens.slice(0, currentIndex).flatMap(screen =>
       screen.components.map((component, i) => {
         if (component.name) {
           const key = `${screen.id}_${component.name.replace(/\s+/g, '_')}_${i}`;
@@ -138,17 +138,22 @@ const generateFlowJSON = (schema: Schema) => {
           } else {
             value = `\${data.${key}}`;
           }
-          return [key, value];
+          return [key, value] as [string, any];
         }
-        return [];
+        // Return null to filter out invalid entries
+        return null;
       })
-    ).reduce((acc: { [key: string]: any }, [key, value]) => {
+    ).filter((entry): entry is [string, any] => entry !== null); // Filter out null values
+  
+    return entries.reduce((acc: { [key: string]: any }, [key, value]) => {
       if (key) {
         acc[key] = value;
       }
       return acc;
     }, {});
   };
+  
+  
 
   const createScreen = (screenData: Screen, index: number, totalScreens: number): any => {
     const isTerminal = index === totalScreens - 1;
@@ -252,4 +257,4 @@ app.post('/generate-json', (req: Request, res: Response) => {
   }
 });
 
-export default router;
+export default generateFlowJSON;
