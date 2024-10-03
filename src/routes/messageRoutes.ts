@@ -65,7 +65,9 @@ interface SendPublishedFlowRequest1 extends Request {
       workspaces: Array<any>;
       newusers: Array<any>;
     };
-    userId: string; // Add this line
+    botid:string;
+    userId: string;
+    flowIdog:string // Add this line
   };
   params: {
     flowId: string;
@@ -257,7 +259,305 @@ router.post('/flows/:flowId/send', async (req: SendPublishedFlowRequest, res: Re
     errorHandler(error, res);
   }
 });
+router.post('/flows/:flowId/sendsignup', async (req: SendPublishedFlowRequest, res: Response) => {
+  const { flowId } = req.params;
 
+  const {
+    customerPhoneNumber,
+    headerText,
+    bodyText,
+    footerText,
+    screenId,
+    customData,
+    flowdata // Assuming this is already an array of objects
+  } = req.body;
+
+  // Log incoming data for debugging
+  console.log(req.params, req.body, "Incoming data");
+
+  // Validate required fields
+  if (!customerPhoneNumber || !headerText || !bodyText || !footerText || !screenId || !customData) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  // Prepare the data payloads
+  const data = {
+    messaging_product: "whatsapp",
+    to: customerPhoneNumber,
+    recipient_type: "individual",
+    type: "interactive",
+    interactive: {
+      type: "flow",
+      header: {
+        type: "text",
+        text: headerText
+      },
+      body: {
+        text: bodyText
+      },
+      footer: {
+        text: footerText
+      },
+      action: {
+        name: "flow",
+        parameters: {
+          flow_message_version: "3",
+          flow_action: "navigate",
+          mode: "draft",
+          flow_token: customData,
+          flow_id: flowId,
+          flow_cta: "Open Flow!",
+          flow_action_payload: {
+            screen: "Sign_Up",
+            data: {
+              title:  "Sign Up"
+              ,
+              namelabel:  "Full Name"
+              ,
+              companylabel:  "Workspace Name"
+              
+            }
+          }
+        }
+      }
+    }
+  };
+
+  // Log the constructed payload for debugging
+  console.log(data.interactive.action.parameters.flow_action_payload.data);
+
+  try {
+    // Send the request
+    const response = await axiosInstance.post(`${BUSINESS_PHONE_NUMBER_ID}/messages`, data);
+    res.json(response.data);
+  } catch (error) {
+    errorHandler(error, res);
+  }
+});
+
+router.post('/flows/:flowId/sendsignupP', async (req: SendPublishedFlowRequest, res: Response) => {
+  const { flowId } = req.params;
+
+  const {
+    customerPhoneNumber,
+    headerText,
+    bodyText,
+    footerText,
+    screenId,
+    customData,
+    flowdata // Assuming this is already an array of objects
+  } = req.body;
+
+  // Log incoming data for debugging
+  console.log(req.params, req.body, "Incoming data");
+
+  // Validate required fields
+  if (!customerPhoneNumber || !headerText || !bodyText || !footerText || !screenId || !customData) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  // Prepare the data payloads
+  const data = {
+    messaging_product: "whatsapp",
+    to: customerPhoneNumber,
+    recipient_type: "individual",
+    type: "interactive",
+    interactive: {
+      type: "flow",
+      header: {
+        type: "text",
+        text: headerText
+      },
+      body: {
+        text: bodyText
+      },
+      footer: {
+        text: footerText
+      },
+      action: {
+        name: "flow",
+        parameters: {
+          flow_message_version: "3",
+          flow_action: "navigate",
+          flow_token: customData,
+          flow_id: flowId,
+          flow_cta: "Click to Signup",
+          flow_action_payload: {
+            screen: "Sign_Up",
+            data: {
+              title:  "Sign Up"
+              ,
+              namelabel:  "Full Name"
+              ,
+              companylabel:  "Workspace Name"
+              
+            }
+          }
+        }
+      }
+    }
+  };
+
+  // Log the constructed payload for debugging
+  console.log(data.interactive.action.parameters.flow_action_payload.data);
+
+  try {
+    // Send the request
+    const response = await axiosInstance.post(`${BUSINESS_PHONE_NUMBER_ID}/messages`, data);
+    res.json(response.data);
+  } catch (error) {
+    errorHandler(error, res);
+  }
+});
+router.post('/flows/:flowId/sendcreateworkspace', async (req: SendPublishedFlowRequest, res: Response) => {
+  const { flowId } = req.params;
+
+  const {
+    customerPhoneNumber,
+    headerText,
+    bodyText,
+    footerText,
+    screenId,
+    customData,
+    flowdata // Assuming this is already an array of objects
+  } = req.body;
+
+  // Log incoming data for debugging
+  console.log(req.params, req.body, "Incoming data");
+
+  // Validate required fields
+  if (!customerPhoneNumber || !headerText || !bodyText || !footerText || !screenId || !customData) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  // Prepare the data payloads
+  const data = {
+    messaging_product: "whatsapp",
+    to: customerPhoneNumber,
+    recipient_type: "individual",
+    type: "interactive",
+    interactive: {
+      type: "flow",
+      header: {
+        type: "text",
+        text: headerText
+      },
+      body: {
+        text: bodyText
+      },
+      footer: {
+        text: footerText
+      },
+      action: {
+        name: "flow",
+        parameters: {
+          flow_message_version: "3",
+          flow_action: "navigate",
+          mode: "draft",
+          flow_token: customData,
+          flow_id: flowId,
+          flow_cta: "Open Flow!",
+          flow_action_payload: {
+            screen: "testssd",
+            data: {
+              title:  "Sign Up"
+            
+              ,
+              companylabel:  "Workspace Name"
+              
+            }
+          }
+        }
+      }
+    }
+  };
+
+  // Log the constructed payload for debugging
+  console.log(data.interactive.action.parameters.flow_action_payload.data);
+
+  try {
+    // Send the request
+    const response = await axiosInstance.post(`${BUSINESS_PHONE_NUMBER_ID}/messages`, data);
+    res.json(response.data);
+  } catch (error) {
+    errorHandler(error, res);
+  }
+});
+
+
+router.post('/flows/:flowId/sendcreateworkspaceP', async (req: SendPublishedFlowRequest, res: Response) => {
+  const { flowId } = req.params;
+
+  const {
+    customerPhoneNumber,
+    headerText,
+    bodyText,
+    footerText,
+    screenId,
+    customData,
+    flowdata // Assuming this is already an array of objects
+  } = req.body;
+
+  // Log incoming data for debugging
+  console.log(req.params, req.body, "Incoming data");
+
+  // Validate required fields
+  if (!customerPhoneNumber || !headerText || !bodyText || !footerText || !screenId || !customData) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  // Prepare the data payloads
+  const data = {
+    messaging_product: "whatsapp",
+    to: customerPhoneNumber,
+    recipient_type: "individual",
+    type: "interactive",
+    interactive: {
+      type: "flow",
+      header: {
+        type: "text",
+        text: headerText
+      },
+      body: {
+        text: bodyText
+      },
+      footer: {
+        text: footerText
+      },
+      action: {
+        name: "flow",
+        parameters: {
+          flow_message_version: "3",
+          flow_action: "navigate",
+          flow_token: customData,
+          flow_id: flowId,
+          flow_cta: "Click to Create Workspace",
+          flow_action_payload: {
+            screen: "testssd",
+            data: {
+              title:  "Sign Up"
+            
+              ,
+              companylabel:  "Workspace Name"
+              
+            }
+          }
+        }
+      }
+    }
+  };
+
+  // Log the constructed payload for debugging
+  console.log(data.interactive.action.parameters.flow_action_payload.data);
+
+  try {
+    // Send the request
+    const response = await axiosInstance.post(`${BUSINESS_PHONE_NUMBER_ID}/messages`, data);
+    res.json(response.data);
+  } catch (error) {
+    errorHandler(error, res);
+  }
+});
 router.post('/flows/:flowId/senddraft', async (req: SendPublishedFlowRequest, res: Response) => {
   const { flowId } = req.params;
 
@@ -385,7 +685,84 @@ router.post('/flows/:flowId/senddraftuser', async (req: SendPublishedFlowRequest
 
 
 
+router.post('/flows/:flowId/editbot', async (req: SendPublishedFlowRequest1, res: Response) => {
+  const { flowId } = req.params;
+  
+  const {
+    customerPhoneNumber,
+    headerText,
+    bodyText,
+    footerText,
+    screenId,
+    customData,
+    botid,
+    flowdata,
+    userId,
+    flowIdog
+     // Assuming this is already an array of objects
+  } = req.body;
 
+  // Log incoming data for debugging
+  console.log(req.params, req.body, "Incoming data");
+
+  // Validate required fields
+  if (!customerPhoneNumber || !headerText || !bodyText || !footerText || !screenId || !customData) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  // Prepare the data payload
+  const data = {
+    messaging_product: "whatsapp",
+    to: customerPhoneNumber,
+    recipient_type: "individual",
+    type: "interactive",
+    interactive: {
+      type: "flow",
+      header: {
+        type: "text",
+        text: headerText
+      },
+      body: {
+        text: bodyText
+      },
+      footer: {
+        text: footerText
+      },
+      action: {
+        name: "flow",
+        parameters: {
+          flow_message_version: "3",
+          flow_action: "navigate",
+          mode: "draft",
+          flow_token: "customData",
+          flow_id: flowId,
+          flow_cta: "Open Flow!",
+          flow_action_payload: {
+            screen: screenId,
+            data: {
+              botinfo: customData,
+              botId:botid,
+              userId:userId,
+              flowIdog:flowIdog
+
+            }
+          }
+        }
+      }
+    }
+  };
+
+  // Log the constructed payload for debugging
+  console.log(data.interactive.action.parameters.flow_action_payload.data);
+
+  try {
+    // Send the request
+    const response = await axiosInstance.post(`${BUSINESS_PHONE_NUMBER_ID}/messages`, data);
+    res.json(response.data);
+  } catch (error) {
+   // errorHandler(error, res);
+  }
+});
 
 
 
@@ -481,7 +858,93 @@ router.post('/flows/:flowId/sendcreatbotform', async (req: SendPublishedFlowRequ
    // errorHandler(error, res);
   }
 });
+router.post('/flows/:flowId/sendcreatbotformP', async (req: SendPublishedFlowRequest1, res: Response) => {
+  const { flowId } = req.params;
+  
+  const {
+    customerPhoneNumber,
+    headerText,
+    bodyText,
+    footerText,
+    screenId,
+    customData,
+    flowdata,
+    userId
+     // Assuming this is already an array of objects
+  } = req.body;
 
+  // Log incoming data for debugging
+  console.log(req.params, req.body, "Incoming data");
+
+  // Validate required fields
+  if (!customerPhoneNumber || !headerText || !bodyText || !footerText || !screenId || !customData) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  // Prepare the data payload
+  const data = {
+    messaging_product: "whatsapp",
+    to: customerPhoneNumber,
+    recipient_type: "individual",
+    type: "interactive",
+    interactive: {
+      type: "flow",
+      header: {
+        type: "text",
+        text: headerText
+      },
+      body: {
+        text: bodyText
+      },
+      footer: {
+        text: footerText
+      },
+      action: {
+        name: "flow",
+        parameters: {
+          flow_message_version: "3",
+          flow_action: "navigate",
+          flow_token: customData,
+          flow_id: flowId,
+          flow_cta: "Click to Create Form/Bot",
+          flow_action_payload: {
+            screen: screenId,
+            data: {
+              workspaceid: customData,
+              userId :userId,
+              namelabel: {
+                type: "string",
+                __example__: "Full Name"
+              },
+              companylabel: {
+                type: "string",
+                __example__: "Company Name"
+              },
+              bufferlabel: {
+                type: "string",
+                __example__: "Buffer In/Out Mins"
+              },
+             
+    workspaces: flowdata?.workspaces, // Assuming flowdata.workspaces is an array
+    newusers: flowdata?.newusers // Assuming flowdata.newusers is an array
+            }
+          }
+        }
+      }
+    }
+  };
+
+  // Log the constructed payload for debugging
+  console.log(data.interactive.action.parameters.flow_action_payload.data);
+
+  try {
+    // Send the request
+    const response = await axiosInstance.post(`${BUSINESS_PHONE_NUMBER_ID}/messages`, data);
+    res.json(response.data);
+  } catch (error) {
+   // errorHandler(error, res);
+  }
+});
 router.post('/flows/:flowId/sendhi', async (req: SendPublishedFlowRequest, res: Response) => {
   const { flowId } = req.params;
   const {
@@ -569,7 +1032,91 @@ router.post('/flows/:flowId/sendhi', async (req: SendPublishedFlowRequest, res: 
   }
 });
 
+router.post('/flows/:flowId/sendhiP', async (req: SendPublishedFlowRequest, res: Response) => {
+  const { flowId } = req.params;
+  const {
+    customerPhoneNumber,
+    headerText,
+    bodyText,
+    footerText,
+    screenId,
+    customData,
+    flowdata // Assuming this is already an array of objects
+  } = req.body;
 
+  // Log incoming data for debugging
+  console.log(req.params, req.body, "Incoming data");
+
+  // Validate required fields
+  if (!customerPhoneNumber || !headerText || !bodyText || !footerText || !screenId || !customData) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  // Prepare the data payload
+  const data = {
+    messaging_product: "whatsapp",
+    to: customerPhoneNumber,
+    recipient_type: "individual",
+    type: "interactive",
+    interactive: {
+      type: "flow",
+      header: {
+        type: "text",
+        text: headerText
+      },
+      body: {
+        text: bodyText
+      },
+      footer: {
+        text: footerText
+      },
+      action: {
+        name: "flow",
+        parameters: {
+          flow_message_version: "3",
+          flow_action: "navigate",
+          flow_token: customData,
+          flow_id: flowId,
+          flow_cta: "Click to Enter your Workspace",
+          flow_action_payload: {
+            screen: screenId,
+            data: {
+              workspaceid: {
+                type: "string",
+                __example__: "Reports & Approvals"
+              },
+              namelabel: {
+                type: "string",
+                __example__: "Full Name"
+              },
+              companylabel: {
+                type: "string",
+                __example__: "Company Name"
+              },
+              bufferlabel: {
+                type: "string",
+                __example__: "Buffer In/Out Mins"
+              },
+             
+    workspaces : flowdata
+       }
+          }
+        }
+      }
+    }
+  };
+
+  // Log the constructed payload for debugging
+  console.log(data.interactive.action.parameters.flow_action_payload.data);
+
+  try {
+    // Send the request
+    const response = await axiosInstance.post(`${BUSINESS_PHONE_NUMBER_ID}/messages`, data);
+    res.json(response.data);
+  } catch (error) {
+    errorHandler(error, res);
+  }
+});
 router.post('/flows/:flowId/senduserhi', async (req: SendPublishedFlowRequest, res: Response) => {
   const { flowId } = req.params;
   const {

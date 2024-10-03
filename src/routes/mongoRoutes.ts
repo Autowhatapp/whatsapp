@@ -59,11 +59,41 @@ client.connect().then(() => {
 });
 
 // User routes
-router.post('/users', async (req, res) => {
+router.post('/usersnew', async (req, res) => {
+
+    console.log(req.body,"zzzzzzzzz")
     try {
         const db = client.db(dbName);
         const collection = db.collection<User>('users');
         const result = await collection.insertOne(req.body);
+        res.status(201).json(result);
+    } catch (error) {
+        console.error('Error creating user:', error);
+        res.status(500).json({ error: 'Error creating user' });
+    }
+});
+
+router.post('/users', async (req, res) => {
+    console.log(req.body, "Request body");
+    try {
+        const db = client.db(dbName);
+        const collection = db.collection<User>('users');
+
+        // Convert string IDs to ObjectIds
+        const userWithObjectIds = {
+            ...req.body,
+            workspaceAssociations: req.body.workspaceAssociations.map((assoc: any) => ({
+                workspace: new ObjectId(assoc.workspace),
+                botAssociations: assoc.botAssociations.map((botAssoc: any) => ({
+                    bot: botAssoc.bot ? new ObjectId(botAssoc.bot) : null,
+                    role: botAssoc.role
+                }))
+            }))
+        };
+
+        console.log(userWithObjectIds, "User data with ObjectIds");
+
+        const result = await collection.insertOne(userWithObjectIds);
         res.status(201).json(result);
     } catch (error) {
         console.error('Error creating user:', error);
@@ -86,7 +116,25 @@ router.get('/users/:phone', async (req, res) => {
         res.status(500).json({ error: 'Error fetching user' });
     }
 });
+router.get('/usersbyid/:phone', async (req, res) => {
+    try {
+        const db = client.db(dbName);
+        console.log(req.params.phone,"sss")
+        const collection = db.collection<User>('users');
 
+        const userId = new ObjectId(req.params.phone); // Assuming the id is in ObjectId format
+    
+        const user = await collection.findOne({ _id: userId });
+        if (user) {
+            res.json(user);
+        } else {
+            res.status(404).json({ error: 'User not found' });
+        }
+    } catch (error) {
+        console.error('Error fetching user:', error);
+        res.status(500).json({ error: 'Error fetching user' });
+    }
+});
 router.post('/users/associate-bot', async (req, res) => {
     const { userId, workspaceId, botId, role } = req.body;
 
@@ -108,6 +156,7 @@ router.post('/users/associate-bot', async (req, res) => {
 
         // Find the user
         const user = await collection.findOne({ _id: userObjectId });
+        
 
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
@@ -115,10 +164,28 @@ router.post('/users/associate-bot', async (req, res) => {
 
         console.log('Workspace Associations:', user.workspaceAssociations);
 
-        // Find the index of the workspace in the user's associations
-        const workspaceIndex = user.workspaceAssociations?.findIndex(assoc => 
-            assoc.workspace.toString() === workspaceObjectId.toString()
-        ) ?? -1;
+        const workspaceIndex = user.workspaceAssociations.findIndex(assoc => {
+            const assocWorkspace = assoc.workspace;
+            console.log('Comparing:', assocWorkspace, 'with', workspaceObjectId);
+            
+            if (assocWorkspace instanceof ObjectId) {
+                console.log("objectid mila")
+                return assocWorkspace.equals(workspaceObjectId);
+            } 
+            
+            else if (typeof assocWorkspace === 'string') {
+                console.log("string mila")
+                return assocWorkspace === workspaceObjectId.toString();
+            } else{
+                
+                
+                console.log("kuchnaimila")
+            }
+            
+            return false;
+        });
+
+        console.log(workspaceIndex,"index",)
 
         if (workspaceIndex === -1) {
             // Workspace not found, add a new association
@@ -357,7 +424,7 @@ router.get('/bots/:id', async (req, res) => {
 
 router.post('/adduserstobot', async (req, res) => {
     try {
-        const { botId, userid, name, role } = req.body;
+        const { botId, userid, name, role ,phone} = req.body;
         console.log(req.body,"dfgfdgdf")
         
         if (!botId || !userid || !name || !role) {
@@ -377,11 +444,11 @@ router.post('/adduserstobot', async (req, res) => {
         );
 
         if (result.matchedCount > 0) {
-            res.json({ message: 'User added to bot successfully' });
+            res.json({ message: 'User added to bot successfully' ,botId, userid, name, role ,phone});
         } else if (result.upsertedCount > 0) {
-            res.json({ message: 'New bot created with user' });
+            res.json({ message: 'New bot created with user',botId, userid, name, role,phone });
         } else {
-            res.status(404).json({ error: 'Bot not found and unable to create new one' });
+            res.status(404).json({ error: 'Bot not found and unable to create new one',botId, userid, name, role ,phone});
         }
     } catch (error) {
         console.error('Error adding user to bot:', error);
@@ -389,7 +456,43 @@ router.post('/adduserstobot', async (req, res) => {
     }
 });
 
+router.post('/editflowdatainbot', async (req, res) => {
+    try {
+        const { botId, botinfo, userId, flowIdog, screens } = req.body;
+        console.log(botId, botinfo, userId, flowIdog, screens, "Request body");
 
+        if (!botId || !screens) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        const db = client.db(dbName);
+        const collection = db.collection('bots');
+
+        const result = await collection.updateOne(
+            { _id: new ObjectId(botId) },
+            { 
+                $set: { 
+                    botinfo: botinfo,
+                    screens: screens,
+                    userId: userId,
+                    flowIdog: flowIdog
+                } 
+            },
+            { upsert: true }
+        );
+
+        console.log(result, "Database operation result");
+
+        if (result.matchedCount > 0 || result.upsertedCount > 0) {
+            res.status(200).json({ message: 'Bot updated successfully', result });
+        } else {
+            res.status(404).json({ error: 'Bot not found' });
+        }
+    } catch (error) {
+        console.error('Error updating bot:', error);
+        res.status(500).json({ error: 'Error updating bot' });
+    }
+});
 
 
 
@@ -435,3 +538,92 @@ router.get('/users/:userId/workspaces/:workspaceId/bots', async (req, res) => {
 });
 
 export default router;
+
+
+router.post('/createdb', async (req, res) => {
+    try {
+        console.log(req.body, "req.body");
+        const dbName = req.body.dbName1;
+        const collectionName = req.body.collection;
+
+        // Create the database instance
+        const db = client.db(dbName);
+        // Create the collection
+        await db.createCollection(collectionName);
+
+        // Return a success message without including the collection object
+        res.status(201).json({ message: 'Collection created successfully', collectionName });
+    } catch (error) {
+        console.error('Error creating database:', error);
+        res.status(500).json({ error: 'Error creating database' });
+    }
+});
+
+
+router.post('/formdata', async (req, res) => {
+    try {
+        console.log(req.body,"asdsadsad")
+        const databasename = req.body.data1.datafilledby;
+        const db = client.db(databasename);
+
+        const collectionName = req.body.collection;
+        const data = req.body.data1;
+
+        // Access the collection dynamically
+        const collection = db.collection(collectionName);
+
+        // Insert the data into the collection
+        const result = await collection.insertOne(data);
+        res.status(201).json(result);
+    } catch (error) {
+        console.error('Error creating workspace:', error);
+        res.status(500).json({ error: 'Error creating workspace' });
+    }
+});
+
+router.post('/fetchlivedata', async (req, res) => {
+    try {
+        // Extract database name and collection name from request body
+        const databasename = req.body.database;
+        const db = client.db(databasename);
+        const collectionName = req.body.collection;
+    
+        // Expecting startDate and endDate to be in milliseconds (number)
+        const startDate = req.body.startDate; 
+        const endDate = req.body.endDate; 
+    
+        // Log the incoming request values for debugging
+        console.log('Start Date:', startDate, 'End Date:', endDate);
+        console.log('Collection Name:', collectionName, 'Database Name:', databasename);
+    
+        // Access the collection dynamically
+        const collection = db.collection(collectionName);
+    
+        // Optional: Log all documents to see what is in the collection
+        const allDocuments = await collection.find({}).toArray();
+        console.log('All Documents:', allDocuments);
+    
+        // Query to find data within the specified entrydatetime range
+        const results = await collection.find({
+            $expr: {
+                $and: [
+                    { $gte: [{ $toLong: "$entrydatetime" }, startDate] },
+                    { $lte: [{ $toLong: "$entrydatetime" }, endDate] }
+                ]
+            }
+        }).toArray();
+    
+        // Log the results
+        console.log('Query Results:', results);
+    
+        // Return the results in the response
+        res.status(200).json(results);
+    } catch (error) {
+        // Log the error for debugging
+        console.error('Error occurred:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+    
+});
+
+
