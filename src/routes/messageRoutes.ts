@@ -73,6 +73,7 @@ interface SendPublishedFlowRequest1 extends Request {
     flowId: string;
   };
 }
+
 // interface SendPublishedFlowRequest extends Request {
 //   body: {
 //     customerPhoneNumber: string;
@@ -119,6 +120,7 @@ interface SendTextMessageRequest {
   recipientPhoneNumber: string; // The recipient's phone number
   messageContent: string;        // The text message content
 }
+
 router.post('/send-message', async (req: SendMessageRequest, res: Response) => {
   const { flowId, sendToNumber, flowToken, customKey, customValue } = req.body;
 
@@ -259,6 +261,7 @@ router.post('/flows/:flowId/send', async (req: SendPublishedFlowRequest, res: Re
     errorHandler(error, res);
   }
 });
+
 router.post('/flows/:flowId/sendsignup', async (req: SendPublishedFlowRequest, res: Response) => {
   const { flowId } = req.params;
 
@@ -409,6 +412,7 @@ router.post('/flows/:flowId/sendsignupP', async (req: SendPublishedFlowRequest, 
     errorHandler(error, res);
   }
 });
+
 router.post('/flows/:flowId/sendcreateworkspace', async (req: SendPublishedFlowRequest, res: Response) => {
   const { flowId } = req.params;
 
@@ -484,7 +488,6 @@ router.post('/flows/:flowId/sendcreateworkspace', async (req: SendPublishedFlowR
   }
 });
 
-
 router.post('/flows/:flowId/sendcreateworkspaceP', async (req: SendPublishedFlowRequest, res: Response) => {
   const { flowId } = req.params;
 
@@ -558,6 +561,7 @@ router.post('/flows/:flowId/sendcreateworkspaceP', async (req: SendPublishedFlow
     errorHandler(error, res);
   }
 });
+
 router.post('/flows/:flowId/senddraft', async (req: SendPublishedFlowRequest, res: Response) => {
   const { flowId } = req.params;
 
@@ -624,6 +628,7 @@ router.post('/flows/:flowId/senddraftuser', async (req: SendPublishedFlowRequest
 
   const {flowdata} = req.body.body
 
+  // console.log
 
   // Log incoming data for debugging
   console.log("sda",flowId,"sda",req.params, req.body,flowdata, "asdsadsadIncoming data");
@@ -674,6 +679,7 @@ router.post('/flows/:flowId/senddraftuser', async (req: SendPublishedFlowRequest
   // console.log(data.interactive.action.parameters.flow_action_payload.data);
 
   try {
+    console.log({ data: data.interactive })
     // Send the request
     const response = await axiosInstance.post(`${BUSINESS_PHONE_NUMBER_ID}/messages`, data);
     console.log(response,"ye draft post ka response")
@@ -682,8 +688,6 @@ router.post('/flows/:flowId/senddraftuser', async (req: SendPublishedFlowRequest
     errorHandler(error, res);
   }
 });
-
-
 
 router.post('/flows/:flowId/editbot', async (req: SendPublishedFlowRequest1, res: Response) => {
   const { flowId } = req.params;
@@ -763,12 +767,6 @@ router.post('/flows/:flowId/editbot', async (req: SendPublishedFlowRequest1, res
    // errorHandler(error, res);
   }
 });
-
-
-
-
-
-
 
 router.post('/flows/:flowId/sendcreatbotform', async (req: SendPublishedFlowRequest1, res: Response) => {
   const { flowId } = req.params;
@@ -858,6 +856,7 @@ router.post('/flows/:flowId/sendcreatbotform', async (req: SendPublishedFlowRequ
    // errorHandler(error, res);
   }
 });
+
 router.post('/flows/:flowId/sendcreatbotformP', async (req: SendPublishedFlowRequest1, res: Response) => {
   const { flowId } = req.params;
   
@@ -945,6 +944,7 @@ router.post('/flows/:flowId/sendcreatbotformP', async (req: SendPublishedFlowReq
    // errorHandler(error, res);
   }
 });
+
 router.post('/flows/:flowId/sendhi', async (req: SendPublishedFlowRequest, res: Response) => {
   const { flowId } = req.params;
   const {
@@ -1117,6 +1117,7 @@ router.post('/flows/:flowId/sendhiP', async (req: SendPublishedFlowRequest, res:
     errorHandler(error, res);
   }
 });
+
 router.post('/flows/:flowId/senduserhi', async (req: SendPublishedFlowRequest, res: Response) => {
   const { flowId } = req.params;
   const {
@@ -1204,10 +1205,6 @@ router.post('/flows/:flowId/senduserhi', async (req: SendPublishedFlowRequest, r
   }
 });
 
-
-
-
-
 router.post('/marketing-flow', async (req: CreateMarketingFlowRequest, res: Response) => {
   const { templateName, messageBody, flowId, screenId } = req.body;
 
@@ -1274,7 +1271,6 @@ router.post('/messages/send-text', async (req: Request<{}, {}, SendTextMessageRe
     errorHandler(error, res);
   }
 });
-
 
 router.post('/send-button-message', async (req: SendButtonMessageRequest, res: Response) => {
 
@@ -1352,4 +1348,5 @@ router.post('/send-list-message', async (req: SendListMessageRequest, res: Respo
     errorHandler(error, res);
   }
 });
+
 export default router;

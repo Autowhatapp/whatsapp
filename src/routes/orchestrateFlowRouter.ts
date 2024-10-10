@@ -24,7 +24,7 @@ router.post('/orchestrate-flow', async (req: OrchestrationRequest, res: Response
 console.log(schema, flowName, headerText, bodyText, footerText, customerPhoneNumber,"schema, flowName, headerText, bodyText, footerText, customerPhoneNumber")
   try {
     // Step 1: Create Flow
-    const createFlowResponse = await axios.post('http://localhost:3000/api/flows/createflow', {
+    const createFlowResponse = await axios.post('http://localhost:8500/api/flows/createflow', {
       name: flowName,
       categories: ["OTHER"]
     });
@@ -38,7 +38,7 @@ console.log(schema, flowName, headerText, bodyText, footerText, customerPhoneNum
     // Step 3: Update Flow
     const formData = new FormData();
     formData.append('file', new Blob([JSON.stringify(flowJSON)], { type: 'application/json' }), 'flow.json');
-    await axios.post(`http://localhost:3000/api/flows/updateflow/${flowId}`, formData, {
+    await axios.post(`${process.env.CURRENT_SERVER}/api/flows/updateflow/${flowId}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
 
