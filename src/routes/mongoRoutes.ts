@@ -266,12 +266,10 @@ router.post("/workspaceexuser", async (req, res) => {
       //  return res.status(404).json({ error: 'User not found or workspace association not added' });
     }
 
-    res
-      .status(201)
-      .json({
-        message: "workspace created and associated with user",
-        workspaceId,
-      });
+    res.status(201).json({
+      message: "workspace created and associated with user",
+      workspaceId,
+    });
   } catch (error) {
     console.error("Error creating workspace or updating user:", error);
     res
@@ -441,6 +439,59 @@ router.get("/bots/:id", async (req, res) => {
   }
 });
 
+router.get("/get-bot-start-command", async (req, res) => {
+  // console.log("Requested bot ID:", req.params.id);
+
+  console.log(req.headers);
+
+  try {
+    const botIds =
+      String(req?.headers?.["botids"])
+        ?.split(",")
+        .map((id) => new ObjectId(id)) ?? [];
+    const startCommand = req.headers["startcommand"];
+    const userId = String(req.headers["userid"]);
+
+    console.log({ botIds, startCommand, userId });
+
+    if (botIds && botIds.length > 0 && startCommand) {
+      const db = client.db(dbName);
+      const collection = db.collection<Bot>("bots");
+
+      const bot = await collection.findOne(
+        {
+          _id: { $in: botIds },
+          isPrivate: true,
+          startCommands: { $in: [startCommand] },
+          "users.userId": userId,
+        },
+        {
+          projection: {
+            _id: 1,
+            serverurl: 1,
+            subserverurl: 1,
+            flowId: 1,
+            name: 1,
+            workspaceId: 1,
+          },
+        }
+      );
+
+      console.log(bot);
+
+      // // const bot = await collection.findOne({ _id: new ObjectId(req.params.id) });
+      if (bot) {
+        res.json(bot);
+      } else {
+        res.status(404).json({ error: "Bot not found" });
+      }
+    }
+  } catch (error: any) {
+    console.error("Error fetching bot:", error.message);
+    res.status(500).json({ error: "Error fetching bot" });
+  }
+});
+
 router.post("/adduserstobot", async (req, res) => {
   try {
     const { botId, userid, name, role, phone } = req.body;
@@ -478,16 +529,14 @@ router.post("/adduserstobot", async (req, res) => {
         phone,
       });
     } else {
-      res
-        .status(404)
-        .json({
-          error: "Bot not found and unable to create new one",
-          botId,
-          userid,
-          name,
-          role,
-          phone,
-        });
+      res.status(404).json({
+        error: "Bot not found and unable to create new one",
+        botId,
+        userid,
+        name,
+        role,
+        phone,
+      });
     }
   } catch (error) {
     console.error("Error adding user to bot:", error);
