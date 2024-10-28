@@ -26,7 +26,7 @@ app.use((err: Error, req: express.Request, res: express.Response, next: express.
   res.status(500).send('Something broke!');
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.SERVER_FLOW_PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
