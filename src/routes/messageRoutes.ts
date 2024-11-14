@@ -1,6 +1,6 @@
-import { Router, Request, Response } from "express";
-import { axiosInstance } from "../config/axios";
-import { errorHandler } from "../middleware/errorHandler";
+import { Router, Request, Response } from 'express';
+import { axiosInstance } from '../config/axios';
+import { errorHandler } from '../middleware/errorHandler';
 
 const router = Router();
 
@@ -122,43 +122,43 @@ interface SendTextMessageRequest {
   messageContent: string; // The text message content
 }
 
-router.post("/send-message", async (req: SendMessageRequest, res: Response) => {
+router.post('/send-message', async (req: SendMessageRequest, res: Response) => {
   const { flowId, sendToNumber, flowToken, customKey, customValue } = req.body;
 
   if (!flowId || !sendToNumber || !flowToken) {
-    return res.status(400).json({ error: "Missing required parameters" });
+    return res.status(400).json({ error: 'Missing required parameters' });
   }
 
   const data = {
-    messaging_product: "whatsapp",
+    messaging_product: 'whatsapp',
     to: sendToNumber,
-    recipient_type: "individual",
-    type: "interactive",
+    recipient_type: 'individual',
+    type: 'interactive',
     interactive: {
-      type: "flow",
+      type: 'flow',
       header: {
-        type: "text",
-        text: "Not shown in draft mode",
+        type: 'text',
+        text: 'Not shown in draft mode',
       },
       body: {
-        text: "Not shown in draft mode",
+        text: 'Not shown in draft mode',
       },
       footer: {
-        text: "Not shown in draft mode",
+        text: 'Not shown in draft mode',
       },
       action: {
-        name: "flow",
+        name: 'flow',
         parameters: {
-          flow_message_version: "3",
-          flow_action: "navigate",
+          flow_message_version: '3',
+          flow_action: 'navigate',
           flow_token: flowToken,
           flow_id: flowId,
-          flow_cta: "Not shown in draft mode",
-          mode: "draft",
+          flow_cta: 'Not shown in draft mode',
+          mode: 'draft',
           flow_action_payload: {
-            screen: "RECOMMEND",
+            screen: 'RECOMMEND',
             data: {
-              [customKey || "<CUSTOM_KEY>"]: customValue || "<CUSTOM_VALUE>",
+              [customKey || '<CUSTOM_KEY>']: customValue || '<CUSTOM_VALUE>',
             },
           },
         },
@@ -178,7 +178,7 @@ router.post("/send-message", async (req: SendMessageRequest, res: Response) => {
 });
 
 router.post(
-  "/flows/:flowId/send",
+  '/flows/:flowId/send',
   async (req: SendPublishedFlowRequest, res: Response) => {
     const { flowId } = req.params;
 
@@ -201,19 +201,19 @@ router.post(
       !screenId ||
       !customData
     ) {
-      return res.status(400).json({ error: "Missing required fields" });
+      return res.status(400).json({ error: 'Missing required fields' });
     }
 
     // Prepare the data payload
     const data = {
-      messaging_product: "whatsapp",
+      messaging_product: 'whatsapp',
       to: customerPhoneNumber,
-      recipient_type: "individual",
-      type: "interactive",
+      recipient_type: 'individual',
+      type: 'interactive',
       interactive: {
-        type: "flow",
+        type: 'flow',
         header: {
-          type: "text",
+          type: 'text',
           text: headerText,
         },
         body: {
@@ -223,32 +223,32 @@ router.post(
           text: footerText,
         },
         action: {
-          name: "flow",
+          name: 'flow',
           parameters: {
-            flow_message_version: "3",
-            flow_action: "navigate",
-            mode: "draft",
+            flow_message_version: '3',
+            flow_action: 'navigate',
+            mode: 'draft',
             flow_token: customData,
             flow_id: flowId,
-            flow_cta: "Open Flow!",
+            flow_cta: 'Open Flow!',
             flow_action_payload: {
               screen: screenId,
               data: {
                 workspaceid: {
-                  type: "string",
-                  __example__: "Reports & Approvals",
+                  type: 'string',
+                  __example__: 'Reports & Approvals',
                 },
                 namelabel: {
-                  type: "string",
-                  __example__: "Full Name",
+                  type: 'string',
+                  __example__: 'Full Name',
                 },
                 companylabel: {
-                  type: "string",
-                  __example__: "Company Name",
+                  type: 'string',
+                  __example__: 'Company Name',
                 },
                 bufferlabel: {
-                  type: "string",
-                  __example__: "Buffer In/Out Mins",
+                  type: 'string',
+                  __example__: 'Buffer In/Out Mins',
                 },
 
                 workspaces: flowdata?.workspaces, // Assuming flowdata.workspaces is an array
@@ -274,7 +274,7 @@ router.post(
 );
 
 router.post(
-  "/flows/:flowId/sendsignup",
+  '/flows/:flowId/sendsignup',
   async (req: SendPublishedFlowRequest, res: Response) => {
     const { flowId } = req.params;
 
@@ -297,19 +297,19 @@ router.post(
       !screenId ||
       !customData
     ) {
-      return res.status(400).json({ error: "Missing required fields" });
+      return res.status(400).json({ error: 'Missing required fields' });
     }
 
     // Prepare the data payloads
     const data = {
-      messaging_product: "whatsapp",
+      messaging_product: 'whatsapp',
       to: customerPhoneNumber,
-      recipient_type: "individual",
-      type: "interactive",
+      recipient_type: 'individual',
+      type: 'interactive',
       interactive: {
-        type: "flow",
+        type: 'flow',
         header: {
-          type: "text",
+          type: 'text',
           text: headerText,
         },
         body: {
@@ -319,20 +319,20 @@ router.post(
           text: footerText,
         },
         action: {
-          name: "flow",
+          name: 'flow',
           parameters: {
-            flow_message_version: "3",
-            flow_action: "navigate",
-            mode: "draft",
+            flow_message_version: '3',
+            flow_action: 'navigate',
+            mode: 'draft',
             flow_token: customData,
             flow_id: flowId,
-            flow_cta: "Open Flow!",
+            flow_cta: 'Open Flow!',
             flow_action_payload: {
-              screen: "Sign_Up",
+              screen: 'Sign_Up',
               data: {
-                title: "Sign Up",
-                namelabel: "Full Name",
-                companylabel: "Workspace Name",
+                title: 'Sign Up',
+                namelabel: 'Full Name',
+                companylabel: 'Workspace Name',
               },
             },
           },
@@ -354,7 +354,7 @@ router.post(
 );
 
 router.post(
-  "/flows/:flowId/sendsignupP",
+  '/flows/:flowId/sendsignupP',
   async (req: SendPublishedFlowRequest, res: Response) => {
     const { flowId } = req.params;
 
@@ -377,19 +377,19 @@ router.post(
       !screenId ||
       !customData
     ) {
-      return res.status(400).json({ error: "Missing required fields" });
+      return res.status(400).json({ error: 'Missing required fields' });
     }
 
     // Prepare the data payloads
     const data = {
-      messaging_product: "whatsapp",
+      messaging_product: 'whatsapp',
       to: customerPhoneNumber,
-      recipient_type: "individual",
-      type: "interactive",
+      recipient_type: 'individual',
+      type: 'interactive',
       interactive: {
-        type: "flow",
+        type: 'flow',
         header: {
-          type: "text",
+          type: 'text',
           text: headerText,
         },
         body: {
@@ -399,19 +399,19 @@ router.post(
           text: footerText,
         },
         action: {
-          name: "flow",
+          name: 'flow',
           parameters: {
-            flow_message_version: "3",
-            flow_action: "navigate",
+            flow_message_version: '3',
+            flow_action: 'navigate',
             flow_token: customData,
             flow_id: flowId,
-            flow_cta: "Click to Signup",
+            flow_cta: 'Click to Signup',
             flow_action_payload: {
-              screen: "Sign_Up",
+              screen: 'Sign_Up',
               data: {
-                title: "Sign Up",
-                namelabel: "Full Name",
-                companylabel: "Workspace Name",
+                title: 'Sign Up',
+                namelabel: 'Full Name',
+                companylabel: 'Workspace Name',
               },
             },
           },
@@ -433,7 +433,7 @@ router.post(
 );
 
 router.post(
-  "/flows/:flowId/sendcreateworkspace",
+  '/flows/:flowId/sendcreateworkspace',
   async (req: SendPublishedFlowRequest, res: Response) => {
     const { flowId } = req.params;
 
@@ -456,19 +456,19 @@ router.post(
       !screenId ||
       !customData
     ) {
-      return res.status(400).json({ error: "Missing required fields" });
+      return res.status(400).json({ error: 'Missing required fields' });
     }
 
     // Prepare the data payloads
     const data = {
-      messaging_product: "whatsapp",
+      messaging_product: 'whatsapp',
       to: customerPhoneNumber,
-      recipient_type: "individual",
-      type: "interactive",
+      recipient_type: 'individual',
+      type: 'interactive',
       interactive: {
-        type: "flow",
+        type: 'flow',
         header: {
-          type: "text",
+          type: 'text',
           text: headerText,
         },
         body: {
@@ -478,20 +478,20 @@ router.post(
           text: footerText,
         },
         action: {
-          name: "flow",
+          name: 'flow',
           parameters: {
-            flow_message_version: "3",
-            flow_action: "navigate",
-            mode: "draft",
+            flow_message_version: '3',
+            flow_action: 'navigate',
+            mode: 'draft',
             flow_token: customData,
             flow_id: flowId,
-            flow_cta: "Open Flow!",
+            flow_cta: 'Open Flow!',
             flow_action_payload: {
-              screen: "testssd",
+              screen: 'testssd',
               data: {
-                title: "Sign Up",
+                title: 'Sign Up',
 
-                companylabel: "Workspace Name",
+                companylabel: 'Workspace Name',
               },
             },
           },
@@ -513,7 +513,7 @@ router.post(
 );
 
 router.post(
-  "/flows/:flowId/sendcreateworkspaceP",
+  '/flows/:flowId/sendcreateworkspaceP',
   async (req: SendPublishedFlowRequest, res: Response) => {
     const { flowId } = req.params;
 
@@ -536,19 +536,19 @@ router.post(
       !screenId ||
       !customData
     ) {
-      return res.status(400).json({ error: "Missing required fields" });
+      return res.status(400).json({ error: 'Missing required fields' });
     }
 
     // Prepare the data payloads
     const data = {
-      messaging_product: "whatsapp",
+      messaging_product: 'whatsapp',
       to: customerPhoneNumber,
-      recipient_type: "individual",
-      type: "interactive",
+      recipient_type: 'individual',
+      type: 'interactive',
       interactive: {
-        type: "flow",
+        type: 'flow',
         header: {
-          type: "text",
+          type: 'text',
           text: headerText,
         },
         body: {
@@ -558,19 +558,19 @@ router.post(
           text: footerText,
         },
         action: {
-          name: "flow",
+          name: 'flow',
           parameters: {
-            flow_message_version: "3",
-            flow_action: "navigate",
+            flow_message_version: '3',
+            flow_action: 'navigate',
             flow_token: customData,
             flow_id: flowId,
-            flow_cta: "Click to Create Workspace",
+            flow_cta: 'Click to Create Workspace',
             flow_action_payload: {
-              screen: "testssd",
+              screen: 'testssd',
               data: {
-                title: "Sign Up",
+                title: 'Sign Up',
 
-                companylabel: "Workspace Name",
+                companylabel: 'Workspace Name',
               },
             },
           },
@@ -592,41 +592,41 @@ router.post(
 );
 
 router.post(
-  "/flows/:flowId/senddraft",
+  '/flows/:flowId/senddraft',
   async (req: SendPublishedFlowRequest, res: Response) => {
     const { flowId } = req.params;
 
     // Prepare the data payload
     const data = {
-      messaging_product: "whatsapp",
+      messaging_product: 'whatsapp',
       to: req.body.body.customerPhoneNumber,
-      recipient_type: "individual",
-      type: "interactive",
+      recipient_type: 'individual',
+      type: 'interactive',
       interactive: {
-        type: "flow",
+        type: 'flow',
         header: {
-          type: "text",
-          text: "Not shown in draft mode",
+          type: 'text',
+          text: 'Not shown in draft mode',
         },
         body: {
-          text: "Not shown in draft mode",
+          text: 'Not shown in draft mode',
         },
         footer: {
-          text: "Not shown in draft mode",
+          text: 'Not shown in draft mode',
         },
         action: {
-          name: "flow",
+          name: 'flow',
           parameters: {
-            flow_message_version: "3",
-            flow_action: "navigate",
-            flow_token: "flowToken",
+            flow_message_version: '3',
+            flow_action: 'navigate',
+            flow_token: 'flowToken',
             flow_id: flowId,
-            flow_cta: "Not shown in draft mode",
-            mode: "draft",
+            flow_cta: 'Not shown in draft mode',
+            mode: 'draft',
             flow_action_payload: {
               screen: req.body.body.screenId,
               data: {
-                ["<CUSTOM_KEY>"]: "<CUSTOM_VALUE>",
+                ['<CUSTOM_KEY>']: '<CUSTOM_VALUE>',
               },
             },
           },
@@ -648,7 +648,7 @@ router.post(
 );
 
 router.post(
-  "/flows/:flowId/senddraftuser",
+  '/flows/:flowId/senddraftuser',
   async (req: SendPublishedFlowRequestUser, res: Response) => {
     const { flowId } = req.params;
 
@@ -656,31 +656,31 @@ router.post(
 
     // Prepare the data payload
     const data = {
-      messaging_product: "whatsapp",
+      messaging_product: 'whatsapp',
       to: req.body.body.customerPhoneNumber,
-      recipient_type: "individual",
-      type: "interactive",
+      recipient_type: 'individual',
+      type: 'interactive',
       interactive: {
-        type: "flow",
+        type: 'flow',
         header: {
-          type: "text",
-          text: "Not shown in draft mode",
+          type: 'text',
+          text: 'Not shown in draft mode',
         },
         body: {
-          text: "Not shown in draft mode",
+          text: 'Not shown in draft mode',
         },
         footer: {
-          text: "Not shown in draft mode",
+          text: 'Not shown in draft mode',
         },
         action: {
-          name: "flow",
+          name: 'flow',
           parameters: {
-            flow_message_version: "3",
-            flow_action: "navigate",
-            flow_token: "flowToken",
+            flow_message_version: '3',
+            flow_action: 'navigate',
+            flow_token: 'flowToken',
             flow_id: flowId,
-            flow_cta: "Not shown in draft mode",
-            mode: "draft",
+            flow_cta: 'Not shown in draft mode',
+            mode: 'draft',
             flow_action_payload: {
               screen: req.body.body.screenId,
               data: {
@@ -710,7 +710,7 @@ router.post(
 );
 
 router.post(
-  "/flows/:flowId/editbot",
+  '/flows/:flowId/editbot',
   async (req: SendPublishedFlowRequest1, res: Response) => {
     const { flowId } = req.params;
 
@@ -737,19 +737,19 @@ router.post(
       !screenId ||
       !customData
     ) {
-      return res.status(400).json({ error: "Missing required fields" });
+      return res.status(400).json({ error: 'Missing required fields' });
     }
 
     // Prepare the data payload
     const data = {
-      messaging_product: "whatsapp",
+      messaging_product: 'whatsapp',
       to: customerPhoneNumber,
-      recipient_type: "individual",
-      type: "interactive",
+      recipient_type: 'individual',
+      type: 'interactive',
       interactive: {
-        type: "flow",
+        type: 'flow',
         header: {
-          type: "text",
+          type: 'text',
           text: headerText,
         },
         body: {
@@ -759,14 +759,14 @@ router.post(
           text: footerText,
         },
         action: {
-          name: "flow",
+          name: 'flow',
           parameters: {
-            flow_message_version: "3",
-            flow_action: "navigate",
-            mode: "draft",
-            flow_token: "customData",
+            flow_message_version: '3',
+            flow_action: 'navigate',
+            mode: 'draft',
+            flow_token: 'customData',
             flow_id: flowId,
-            flow_cta: "Open Flow!",
+            flow_cta: 'Open Flow!',
             flow_action_payload: {
               screen: screenId,
               data: {
@@ -795,7 +795,7 @@ router.post(
 );
 
 router.post(
-  "/flows/:flowId/sendcreatbotform",
+  '/flows/:flowId/sendcreatbotform',
   async (req: SendPublishedFlowRequest1, res: Response) => {
     const { flowId } = req.params;
 
@@ -820,19 +820,19 @@ router.post(
       !screenId ||
       !customData
     ) {
-      return res.status(400).json({ error: "Missing required fields" });
+      return res.status(400).json({ error: 'Missing required fields' });
     }
 
     // Prepare the data payload
     const data = {
-      messaging_product: "whatsapp",
+      messaging_product: 'whatsapp',
       to: customerPhoneNumber,
-      recipient_type: "individual",
-      type: "interactive",
+      recipient_type: 'individual',
+      type: 'interactive',
       interactive: {
-        type: "flow",
+        type: 'flow',
         header: {
-          type: "text",
+          type: 'text',
           text: headerText,
         },
         body: {
@@ -842,30 +842,30 @@ router.post(
           text: footerText,
         },
         action: {
-          name: "flow",
+          name: 'flow',
           parameters: {
-            flow_message_version: "3",
-            flow_action: "navigate",
-            mode: "draft",
+            flow_message_version: '3',
+            flow_action: 'navigate',
+            mode: 'draft',
             flow_token: customData,
             flow_id: flowId,
-            flow_cta: "Open Flow!",
+            flow_cta: 'Open Flow!',
             flow_action_payload: {
               screen: screenId,
               data: {
                 workspaceid: customData,
                 userId: userId,
                 namelabel: {
-                  type: "string",
-                  __example__: "Full Name",
+                  type: 'string',
+                  __example__: 'Full Name',
                 },
                 companylabel: {
-                  type: "string",
-                  __example__: "Company Name",
+                  type: 'string',
+                  __example__: 'Company Name',
                 },
                 bufferlabel: {
-                  type: "string",
-                  __example__: "Buffer In/Out Mins",
+                  type: 'string',
+                  __example__: 'Buffer In/Out Mins',
                 },
 
                 workspaces: flowdata?.workspaces, // Assuming flowdata.workspaces is an array
@@ -891,7 +891,7 @@ router.post(
 );
 
 router.post(
-  "/flows/:flowId/sendcreatbotformP",
+  '/flows/:flowId/sendcreatbotformP',
   async (req: SendPublishedFlowRequest1, res: Response) => {
     const { flowId } = req.params;
 
@@ -916,19 +916,19 @@ router.post(
       !screenId ||
       !customData
     ) {
-      return res.status(400).json({ error: "Missing required fields" });
+      return res.status(400).json({ error: 'Missing required fields' });
     }
 
     // Prepare the data payload
     const data = {
-      messaging_product: "whatsapp",
+      messaging_product: 'whatsapp',
       to: customerPhoneNumber,
-      recipient_type: "individual",
-      type: "interactive",
+      recipient_type: 'individual',
+      type: 'interactive',
       interactive: {
-        type: "flow",
+        type: 'flow',
         header: {
-          type: "text",
+          type: 'text',
           text: headerText,
         },
         body: {
@@ -938,21 +938,21 @@ router.post(
           text: footerText,
         },
         action: {
-          name: "flow",
+          name: 'flow',
           parameters: {
-            mode: "draft",
-            flow_message_version: "3",
-            flow_action: "navigate",
+            mode: 'draft',
+            flow_message_version: '3',
+            flow_action: 'navigate',
             flow_token: customData,
             flow_id: flowId,
-            flow_cta: "Click to Create Form/Bot",
+            flow_cta: 'Click to Create Form/Bot',
             flow_action_payload: {
-              screen: "Form_Builder",
+              screen: 'Form_Builder',
               data: {
                 workspaceId: customData,
                 userId: userId,
-                message: "",
-                serverUrl: "http://localhost:9005/api/v1/flows/builder",
+                message: '',
+                serverUrl: 'http://localhost:9005/api/v1/flows/builder',
               },
             },
           },
@@ -974,7 +974,7 @@ router.post(
 );
 
 router.post(
-  "/flows/:flowId/sendhi",
+  '/flows/:flowId/sendhi',
   async (req: SendPublishedFlowRequest, res: Response) => {
     const { flowId } = req.params;
     const {
@@ -996,19 +996,19 @@ router.post(
       !screenId ||
       !customData
     ) {
-      return res.status(400).json({ error: "Missing required fields" });
+      return res.status(400).json({ error: 'Missing required fields' });
     }
 
     // Prepare the data payload
     const data = {
-      messaging_product: "whatsapp",
+      messaging_product: 'whatsapp',
       to: customerPhoneNumber,
-      recipient_type: "individual",
-      type: "interactive",
+      recipient_type: 'individual',
+      type: 'interactive',
       interactive: {
-        type: "flow",
+        type: 'flow',
         header: {
-          type: "text",
+          type: 'text',
           text: headerText,
         },
         body: {
@@ -1018,32 +1018,32 @@ router.post(
           text: footerText,
         },
         action: {
-          name: "flow",
+          name: 'flow',
           parameters: {
-            flow_message_version: "3",
-            flow_action: "navigate",
-            mode: "draft",
+            flow_message_version: '3',
+            flow_action: 'navigate',
+            mode: 'draft',
             flow_token: customData,
             flow_id: flowId,
-            flow_cta: "Open Flow!",
+            flow_cta: 'Open Flow!',
             flow_action_payload: {
               screen: screenId,
               data: {
                 workspaceid: {
-                  type: "string",
-                  __example__: "Reports & Approvals",
+                  type: 'string',
+                  __example__: 'Reports & Approvals',
                 },
                 namelabel: {
-                  type: "string",
-                  __example__: "Full Name",
+                  type: 'string',
+                  __example__: 'Full Name',
                 },
                 companylabel: {
-                  type: "string",
-                  __example__: "Company Name",
+                  type: 'string',
+                  __example__: 'Company Name',
                 },
                 bufferlabel: {
-                  type: "string",
-                  __example__: "Buffer In/Out Mins",
+                  type: 'string',
+                  __example__: 'Buffer In/Out Mins',
                 },
 
                 workspaces: flowdata,
@@ -1068,7 +1068,7 @@ router.post(
 );
 
 router.post(
-  "/flows/:flowId/sendhiP",
+  '/flows/:flowId/sendhiP',
   async (req: SendPublishedFlowRequest, res: Response) => {
     const { flowId } = req.params;
     const {
@@ -1090,19 +1090,19 @@ router.post(
       !screenId ||
       !customData
     ) {
-      return res.status(400).json({ error: "Missing required fields" });
+      return res.status(400).json({ error: 'Missing required fields' });
     }
 
     // Prepare the data payload
     const data = {
-      messaging_product: "whatsapp",
+      messaging_product: 'whatsapp',
       to: customerPhoneNumber,
-      recipient_type: "individual",
-      type: "interactive",
+      recipient_type: 'individual',
+      type: 'interactive',
       interactive: {
-        type: "flow",
+        type: 'flow',
         header: {
-          type: "text",
+          type: 'text',
           text: headerText,
         },
         body: {
@@ -1112,31 +1112,31 @@ router.post(
           text: footerText,
         },
         action: {
-          name: "flow",
+          name: 'flow',
           parameters: {
-            flow_message_version: "3",
-            flow_action: "navigate",
+            flow_message_version: '3',
+            flow_action: 'navigate',
             flow_token: customData,
             flow_id: flowId,
-            flow_cta: "Click to Enter your Workspace",
+            flow_cta: 'Click to Enter your Workspace',
             flow_action_payload: {
               screen: screenId,
               data: {
                 workspaceid: {
-                  type: "string",
-                  __example__: "Reports & Approvals",
+                  type: 'string',
+                  __example__: 'Reports & Approvals',
                 },
                 namelabel: {
-                  type: "string",
-                  __example__: "Full Name",
+                  type: 'string',
+                  __example__: 'Full Name',
                 },
                 companylabel: {
-                  type: "string",
-                  __example__: "Company Name",
+                  type: 'string',
+                  __example__: 'Company Name',
                 },
                 bufferlabel: {
-                  type: "string",
-                  __example__: "Buffer In/Out Mins",
+                  type: 'string',
+                  __example__: 'Buffer In/Out Mins',
                 },
 
                 workspaces: flowdata,
@@ -1161,7 +1161,7 @@ router.post(
 );
 
 router.post(
-  "/flows/:flowId/senduserhi",
+  '/flows/:flowId/senduserhi',
   async (req: SendPublishedFlowRequest, res: Response) => {
     const { flowId } = req.params;
     const {
@@ -1183,19 +1183,19 @@ router.post(
       !screenId ||
       !customData
     ) {
-      return res.status(400).json({ error: "Missing required fields" });
+      return res.status(400).json({ error: 'Missing required fields' });
     }
 
     // Prepare the data payload
     const data = {
-      messaging_product: "whatsapp",
+      messaging_product: 'whatsapp',
       to: customerPhoneNumber,
-      recipient_type: "individual",
-      type: "interactive",
+      recipient_type: 'individual',
+      type: 'interactive',
       interactive: {
-        type: "flow",
+        type: 'flow',
         header: {
-          type: "text",
+          type: 'text',
           text: headerText,
         },
         body: {
@@ -1205,32 +1205,32 @@ router.post(
           text: footerText,
         },
         action: {
-          name: "flow",
+          name: 'flow',
           parameters: {
-            flow_message_version: "3",
-            flow_action: "navigate",
-            mode: "draft",
+            flow_message_version: '3',
+            flow_action: 'navigate',
+            mode: 'draft',
             flow_token: customData,
             flow_id: flowId,
-            flow_cta: "Open Flow!",
+            flow_cta: 'Open Flow!',
             flow_action_payload: {
               screen: screenId,
               data: {
                 workspaceid: {
-                  type: "string",
-                  __example__: "Reports & Approvals",
+                  type: 'string',
+                  __example__: 'Reports & Approvals',
                 },
                 namelabel: {
-                  type: "string",
-                  __example__: "Full Name",
+                  type: 'string',
+                  __example__: 'Full Name',
                 },
                 companylabel: {
-                  type: "string",
-                  __example__: "Company Name",
+                  type: 'string',
+                  __example__: 'Company Name',
                 },
                 bufferlabel: {
-                  type: "string",
-                  __example__: "Buffer In/Out Mins",
+                  type: 'string',
+                  __example__: 'Buffer In/Out Mins',
                 },
 
                 workspaces: flowdata,
@@ -1255,32 +1255,32 @@ router.post(
 );
 
 router.post(
-  "/marketing-flow",
+  '/marketing-flow',
   async (req: CreateMarketingFlowRequest, res: Response) => {
     const { templateName, messageBody, flowId, screenId } = req.body;
 
     if (!templateName || !messageBody || !flowId || !screenId) {
-      return res.status(400).json({ error: "Missing required parameters" });
+      return res.status(400).json({ error: 'Missing required parameters' });
     }
 
     const data = {
       name: templateName,
-      language: "en_US",
-      category: "MARKETING",
+      language: 'en_US',
+      category: 'MARKETING',
       components: [
         {
-          type: "body",
+          type: 'body',
           text: messageBody,
         },
         {
-          type: "BUTTONS",
+          type: 'BUTTONS',
           buttons: [
             {
-              type: "FLOW",
-              text: "Open flow!",
+              type: 'FLOW',
+              text: 'Open flow!',
               flow_id: flowId,
               navigate_screen: screenId,
-              flow_action: "navigate",
+              flow_action: 'navigate',
             },
           ],
         },
@@ -1300,21 +1300,21 @@ router.post(
 );
 
 router.post(
-  "/messages/send-text",
+  '/messages/send-text',
   async (req: Request<{}, {}, SendTextMessageRequest>, res: Response) => {
     const { recipientPhoneNumber, messageContent } = req.body;
 
     // Check for required fields
     if (!recipientPhoneNumber || !messageContent) {
-      return res.status(400).json({ error: "Missing required fields" });
+      return res.status(400).json({ error: 'Missing required fields' });
     }
 
     // Prepare the data for the API request
     const data = {
-      messaging_product: "whatsapp",
-      recipient_type: "individual",
+      messaging_product: 'whatsapp',
+      recipient_type: 'individual',
       to: recipientPhoneNumber,
-      type: "text",
+      type: 'text',
       text: {
         preview_url: false,
         body: messageContent,
@@ -1334,27 +1334,27 @@ router.post(
 );
 
 router.post(
-  "/send-button-message",
+  '/send-button-message',
   async (req: SendButtonMessageRequest, res: Response) => {
     const { to, buttonText, buttons } = req.body;
 
     if (!to || !buttonText || !buttons || buttons.length === 0) {
-      return res.status(400).json({ error: "Missing required parameters" });
+      return res.status(400).json({ error: 'Missing required parameters' });
     }
 
     const data = {
-      messaging_product: "whatsapp",
-      recipient_type: "individual",
+      messaging_product: 'whatsapp',
+      recipient_type: 'individual',
       to: to,
-      type: "interactive",
+      type: 'interactive',
       interactive: {
-        type: "button",
+        type: 'button',
         body: {
           text: buttonText,
         },
         action: {
           buttons: buttons.map((button) => ({
-            type: "reply",
+            type: 'reply',
             reply: {
               id: button.id,
               title: button.title,
@@ -1377,7 +1377,7 @@ router.post(
 );
 
 router.post(
-  "/send-list-message",
+  '/send-list-message',
   async (req: SendListMessageRequest, res: Response) => {
     const { to, headerText, bodyText, footerText, buttonText, sections } =
       req.body;
@@ -1391,18 +1391,18 @@ router.post(
       !sections ||
       sections.length === 0
     ) {
-      return res.status(400).json({ error: "Missing required parameters" });
+      return res.status(400).json({ error: 'Missing required parameters' });
     }
 
     const data = {
-      messaging_product: "whatsapp",
-      recipient_type: "individual",
+      messaging_product: 'whatsapp',
+      recipient_type: 'individual',
       to: to,
-      type: "interactive",
+      type: 'interactive',
       interactive: {
-        type: "list",
+        type: 'list',
         header: {
-          type: "text",
+          type: 'text',
           text: headerText,
         },
         body: {
